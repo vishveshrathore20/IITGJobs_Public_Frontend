@@ -3,13 +3,13 @@ import React from "react";
 const Footer = () => {
   const year = new Date().getFullYear(); // auto updates year
   return (
-    <footer className="border-t border-slate-200 bg-white/95 py-10 text-sm text-slate-600 dark:border-slate-800 dark:bg-slate-900/80 dark:text-slate-400">
+    <footer className="border-t border-white/10 bg-gradient-to-b from-black/85 via-slate-950/70 to-slate-900/60 py-12 text-sm text-slate-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           {/* Brand */}
           <div className="flex flex-col gap-3">
             <div className="flex items-center gap-2">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white ring-1 ring-slate-200 shadow-sm dark:bg-slate-900 dark:ring-slate-700">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-900 ring-1 ring-white/10 shadow-sm">
                 <svg
                   viewBox="0 0 40 40"
                   className="h-4 w-4"
@@ -51,11 +51,11 @@ const Footer = () => {
                   />
                 </svg>
               </div>
-              <span className="text-base font-semibold text-slate-800 dark:text-slate-200">
-                IITGJobs
+              <span className="text-base font-semibold text-white">
+                IITGJobs.com Pvt. Ltd.
               </span>
             </div>
-            <p className="max-w-sm text-xs text-slate-500 dark:text-slate-400">
+            <p className="max-w-sm text-xs text-slate-400">
               30+ years of trusted recruitment and HR solutions. Building careers
               and empowering businesses.
             </p>
@@ -63,29 +63,24 @@ const Footer = () => {
 
           {/* Contact */}
           <div className="flex flex-col gap-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Contact</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400">Contact</h4>
             <div className="flex flex-col gap-1">
-              <a href="mailto:hr1@iitgjobs.com" className="hover:text-slate-900 dark:hover:text-white">notification@iitgjobs.com</a>
-              <a href="mailto:hr2@iitgjobs.com" className="hover:text-slate-900 dark:hover:text-white">hr1@iitgjobs.com</a>
+              <a href="mailto:hr1@iitgjobs.com" className="hover:text-white">contact@iitgjobs.com</a>
+              <a href="mailto:hr2@iitgjobs.com" className="hover:text-white">hr1@iitgjobs.com</a>
             </div>
             <div className="mt-2 flex flex-col gap-1">
-              <a href="tel:+919424185211" className="hover:text-slate-900 dark:hover:text-white">+91 94241 85211</a>
-              {/* <a href="tel:+917614005606" className="hover:text-slate-900 dark:hover:text-white">0761 400 5606</a>
-              <a href="https://wa.me/919424185211" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-slate-900 dark:hover:text-white">
-                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.52 3.48A11.94 11.94 0 0012 0C5.37 0 0 5.37 0 12c0 2.11.55 4.18 1.6 6.02L0 24l6.15-1.6A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.2-3.48-8.52zM12 22a9.9 9.9 0 01-5.06-1.4l-.36-.22-3.65.95.97-3.56-.23-.37A9.9 9.9 0 012 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.27-7.31c-.29-.14-1.73-.85-2-.94-.27-.1-.47-.14-.67.14-.19.29-.77.94-.94 1.13-.17.2-.34.22-.63.08-.29-.14-1.22-.45-2.33-1.44-.86-.77-1.44-1.72-1.6-2-.17-.29-.02-.45.12-.59.12-.12.29-.32.43-.48.14-.17.19-.29.29-.48.1-.19.05-.36-.02-.5-.07-.14-.67-1.62-.92-2.22-.24-.58-.48-.5-.67-.5h-.57c-.19 0-.5.07-.77.36-.26.29-1 1-1 2.45s1.03 2.84 1.17 3.03c.14.19 2.03 3.1 4.91 4.35.69.3 1.22.48 1.64.62.69.22 1.32.19 1.82.12.56-.08 1.73-.71 1.98-1.4.24-.69.24-1.28.17-1.4-.07-.12-.26-.19-.55-.33z"/></svg>
-                WhatsApp
-              </a> */}
+              
             </div>
           </div>
 
           {/* Office */}
           <div className="flex flex-col gap-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Office</h4>
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400">Office</h4>
             <address className="not-italic text-xs">
               Madan Mahal, Shiv Hari Complex, Mahanadda, Nagpur Rd, near Gulzar Hotel,
               Jabalpur, Madhya Pradesh 482002
             </address>
-            <a href="https://maps.app.goo.gl/wPK7jdvnoLh4Yg4u8" target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline dark:text-blue-400">
+            <a href="https://maps.app.goo.gl/wPK7jdvnoLh4Yg4u8" target="_blank" rel="noreferrer" className="text-xs text-indigo-400 hover:text-indigo-300 hover:underline">
               View on Google Maps
             </a>
             <p className="text-xs">Hours: Mon–Sat, 10:30 AM – 7:00 PM</p>
@@ -93,7 +88,7 @@ const Footer = () => {
 
           {/* Socials */}
           <div className="flex flex-col gap-2">
-            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            <h4 className="text-xs font-semibold uppercase tracking-wide text-slate-400">
               Follow
             </h4>
             <div className="flex items-center gap-4">
@@ -101,7 +96,7 @@ const Footer = () => {
                 href="https://www.linkedin.com/company/iitg-jobs-pvt-ltd-/posts/?feedView=all"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 hover:text-slate-900 dark:hover:text-white"
+                className="inline-flex items-center gap-2 hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -117,7 +112,7 @@ const Footer = () => {
                 href="https://www.instagram.com/iitg_job?igsh=aHA1NWs0ZHAzNm9s"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-2 hover:text-slate-900 dark:hover:text-white"
+                className="inline-flex items-center gap-2 hover:text-white"
               >
                 <svg
                   className="h-4 w-4"
@@ -134,7 +129,7 @@ const Footer = () => {
         </div>
 
         {/* Bottom line */}
-        <div className="mt-8 border-t border-slate-200 pt-6 text-xs text-slate-500 dark:border-slate-800 dark:text-slate-400">
+        <div className="mt-8 border-t border-white/10 pt-6 text-xs text-slate-400">
           © {year} IITGJobs. All rights reserved.
         </div>
       </div>

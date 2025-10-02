@@ -1,42 +1,50 @@
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import ContactPage from "./pages/ContactPage";
-import EmployerSignupPage from "./pages/EmployerSignupPage";
-import EmployerLoginPage from "./pages/EmployerLoginPage";
-import ClientDashboard from "./pages/ClientDashboard";
-import ConfidentialData from "./pages/ConfidentialData";
-import ClientApplicants from "./pages/ClientApplicants";
-import ClientProfile from "./pages/ClientProfile";
-import ClientSupport from "./pages/ClientSupport";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { Suspense, lazy, useEffect } from "react";
+import { AnimatePresence } from "framer-motion";
+import PageTransition from "./components/common/PageTransition";
 import ProtectedRoute from "./routes/ProtectedRoute";
-import ClientService from "./pages/ClientService";
-import ClientDemo from "./pages/ClientDemo";
-import RecruitmentService from "./pages/RecruitmentService";
-import AttrationService from "./pages/AttrationService";
-import Banner from "./components/LandingBanner";
+import ApplicationForm from "./components/Public/other/ApplicationForm";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const About = lazy(() => import("./pages/About"));
+const TrustedHR = lazy(() => import("./components/Public/Landing Page/TrustedHR"));
+const AttritionDemoService = lazy(() => import("./components/Client/Demo/AttritationControl"));
+const EmployerSignupPage = lazy(() => import("./components/Public/other/EmployerSignupPage"));
+const AttritationGrid = lazy(() => import("./components/Client/Demo/AttritationGrid"));
+const ConfidentialData = lazy(() => import("./components/Client/Demo/ConfidentialData"));
+const ContactUs = lazy(() => import("./components/Public/other/ContactUs"));
+const EmployerLoginPage = lazy(() => import("./components/Public/other/EmployerLoginPage"));
+const RecuitmentService = lazy(() => import("./components/Client/Recuitment/Recuitment"));
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
-    <Routes>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/contact" element={<ContactPage />} />
-      <Route path="/employer/signup" element={<EmployerSignupPage />} />
-      <Route path="/employer/login" element={<EmployerLoginPage />} />
-      <Route path="/services/recruitment" element={<RecruitmentService />} />
-      <Route path="/services/attrition" element={<AttrationService />} />
-
-      {/* Corporate (Client) protected routes */}
-      <Route element={<ProtectedRoute requireCorporate={true} corporateRedirectTo="/employer/login" /> }>
-        <Route path="client/dashboard" element={<ClientDashboard />} />
-        <Route path="client/jobs" element={<ConfidentialData />} />
-        <Route path="client/applicants" element={<ClientApplicants />} />
-        <Route path="client/profile" element={<ClientProfile />} />
-        <Route path="client/support" element={<ClientSupport />} />
-
-        <Route path="client/service" element={<ClientService />} />
-        <Route path="/client/demo" element={<ClientDemo />} />
-      </Route>
-    </Routes>
+    <AnimatePresence mode="wait">
+      <Suspense fallback={<div className="min-h-screen bg-gray-950 text-slate-200 flex items-center justify-center">Loading…</div>}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
+          <Route path="/about" element={<PageTransition><About /></PageTransition>} />
+          <Route path="/trusted-hr" element={<PageTransition><TrustedHR /></PageTransition>} />
+          <Route path="/attrition-demo" element={<PageTransition><AttritionDemoService /></PageTransition>} />
+          <Route path="/employer-signup" element={<PageTransition><EmployerSignupPage /></PageTransition>} />
+          <Route path="/contact-us" element={<PageTransition><ContactUs /></PageTransition>} />
+          <Route path="/employer-login" element={<PageTransition><EmployerLoginPage /></PageTransition>} />
+          <Route path="/attrition-grid" element={<PageTransition><AttritationGrid /></PageTransition>} />
+          <Route path="/recuitment-service" element={<PageTransition><RecuitmentService /></PageTransition>} />
+          <Route path="/application-form" element={<PageTransition><ApplicationForm /></PageTransition>} />
+          {/* Protected: corporate only */}
+          <Route element={<ProtectedRoute requireCorporate corporateRedirectTo="/employer-login" />}> 
+            
+            <Route path="/confidential-data" element={<PageTransition><ConfidentialData /></PageTransition>} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </AnimatePresence>
   );
 }
 

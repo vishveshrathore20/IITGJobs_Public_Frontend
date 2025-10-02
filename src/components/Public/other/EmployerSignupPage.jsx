@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import { BASE_URL } from "../config";
+import Footer from "../Landing Page/Footer";
+import Navbar from "../Landing Page/Navbar";
+import { BASE_URL } from "../../../config";
 import { toast } from "react-hot-toast";
 
 const initial = {
@@ -17,17 +17,25 @@ const initial = {
   productLine: "",
 };
 
+// Define the core gradient style for the theme
+const GRADIENT_TEXT_STYLE = {
+  backgroundImage: 'linear-gradient(90deg, #ffffff 0%, #dbeafe 40%, #6366f1 100%)',
+  backgroundClip: 'text',
+  color: 'transparent',
+  textShadow: '0 2px 10px rgba(0,0,0,0.5)',
+};
+
 const EmployerSignupPage = () => {
   const [values, setValues] = useState(initial);
   const [touched, setTouched] = useState({});
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
-  const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
+  // stages: 'form' | 'otp' | 'result'
+  const [stage, setStage] = useState('form');
 
   const notify = (message, type = "info") => {
     if (type === "success") return toast.success(message);
@@ -80,6 +88,8 @@ const EmployerSignupPage = () => {
     setLoading(true);
     setError("");
     setSuccessMsg("");
+    // Immediately hide form and show OTP modal
+    setStage('otp');
 
     try {
       const API_BASE = BASE_URL || "";
@@ -115,12 +125,12 @@ const EmployerSignupPage = () => {
         const message = data?.message || `Request failed with status ${resp.status}`;
         setError(message);
         notify(message, "error");
-        setSubmitted(false);
+        // If backend fails, return to form stage
+        setStage('form');
       } else {
-        setSubmitted(true);
         setSuccessMsg(data?.message || "OTP sent to your email. Please verify.");
         notify(data?.message || "OTP sent to your email. Please verify.", "success");
-        setShowOtp(true);
+        // Stay in OTP stage
         setValues((s) => ({
           companyName: "",
           industryType: "",
@@ -138,7 +148,7 @@ const EmployerSignupPage = () => {
     } catch (err) {
       setError("Network error. Please try again.");
       notify("Network error. Please try again.", "error");
-      setSubmitted(false);
+      setStage('form');
     } finally {
       setLoading(false);
     }
@@ -163,45 +173,63 @@ const EmployerSignupPage = () => {
         setError(message);
         notify(message, "error");
         setVerified(false);
+        // Stay in OTP stage and let user retry
       } else {
         setVerified(true);
         setSuccessMsg(data?.message || "Email verified successfully.");
         notify(data?.message || "Email verified successfully.", "success");
-        setShowOtp(false);
         setOtp("");
+        // Move to result modal stage
+        setStage('result');
       }
     } catch (err) {
       setError("Network error during verification. Please try again.");
       notify("Network error during verification. Please try again.", "error");
       setVerified(false);
+      // Stay in OTP stage
     } finally {
       setVerifying(false);
+      
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100">
+    <div className="min-h-screen bg-gray-950 text-slate-100">
       <Navbar />
-      <section className="relative bg-slate-50 py-16 dark:bg-slate-900">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6">
-          <h1 className="text-center text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl dark:text-white">
+      <section className="relative py-16 bg-slate-900">
+        <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-1 bg-gradient-to-r from-blue-600 via-blue-500 to-indigo-900" />
+        {stage === 'form' && (
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 p-8 rounded-2xl bg-slate-800 shadow-2xl shadow-indigo-900/40">
+          <h1 className="text-center text-4xl font-extrabold tracking-tight sm:text-5xl" style={GRADIENT_TEXT_STYLE}>
             Employer Signup
           </h1>
-          <p className="mt-2 text-center text-sm text-slate-600 dark:text-slate-300">
-            Create your employer account to post jobs and hire faster.
+          <p className="mt-2 text-center text-sm text-slate-400">
+            Create your employer account to post jobs and hire faster under our PPM model.
           </p>
 
-          <form onSubmit={onSubmit} className="mt-8 space-y-4">
+          {/* Error and Success Messages */}
+          {error && (
+            <div className="mt-4 p-3 bg-red-900/30 text-red-400 border border-red-700 rounded-xl text-sm font-medium">
+              Error: {error}
+            </div>
+          )}
+          {verified && (
+            <div className="mt-4 p-3 bg-emerald-900/30 text-emerald-400 border border-emerald-700 rounded-xl text-sm font-medium">
+              Success: {successMsg}
+            </div>
+          )}
+
+          <form onSubmit={onSubmit} className="mt-8 space-y-6">
             {/* Company & Industry */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
                 <label className="mb-1 block text-sm font-medium">Company Name</label>
                 <input
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.companyName}
                   onChange={(e) => setField("companyName", e.target.value)}
                   onBlur={() => onBlur("companyName")}
-                  placeholder="Acme Pvt Ltd"
+                  placeholder="--"
                   required
                 />
                 {touched.companyName && !nameValid && (
@@ -211,11 +239,11 @@ const EmployerSignupPage = () => {
               <div>
                 <label className="mb-1 block text-sm font-medium">Industry Type</label>
                 <input
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.industryType}
                   onChange={(e) => setField("industryType", e.target.value)}
                   onBlur={() => onBlur("industryType")}
-                  placeholder="Manufacturing / IT / BFSI"
+                  placeholder="--"
                   required
                 />
                 {touched.industryType && !industryValid && (
@@ -228,11 +256,11 @@ const EmployerSignupPage = () => {
               <div>
                 <label className="mb-1 block text-sm font-medium">Location</label>
                 <input
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.location}
                   onChange={(e) => setField("location", e.target.value)}
                   onBlur={() => onBlur("location")}
-                  placeholder="e.g. Mumbai, India"
+                  placeholder="--"
                   required
                 />
                 {touched.location && !locationValid && (
@@ -242,11 +270,11 @@ const EmployerSignupPage = () => {
               <div>
                 <label className="mb-1 block text-sm font-medium">Product Line</label>
                 <input
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.productLine}
                   onChange={(e) => setField("productLine", e.target.value)}
                   onBlur={() => onBlur("productLine")}
-                  placeholder="e.g. SaaS / Machinery"
+                  placeholder="--"
                   required
                 />
                 {touched.productLine && !productLineValid && (
@@ -260,11 +288,11 @@ const EmployerSignupPage = () => {
               <div>
                 <label className="mb-1 block text-sm font-medium">HR Name</label>
                 <input
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.hrName}
                   onChange={(e) => setField("hrName", e.target.value)}
                   onBlur={() => onBlur("hrName")}
-                  placeholder="John Doe"
+                  placeholder="--"
                   required
                 />
                 {touched.hrName && !hrValid && (
@@ -275,11 +303,11 @@ const EmployerSignupPage = () => {
                 <label className="mb-1 block text-sm font-medium">Mobile Number</label>
                 <input
                   type="tel"
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.mobile}
                   onChange={(e) => setField("mobile", e.target.value)}
                   onBlur={() => onBlur("mobile")}
-                  placeholder="+91 98765 43210"
+                  placeholder="--"
                   required
                 />
                 {touched.mobile && !phoneValid && (
@@ -294,11 +322,11 @@ const EmployerSignupPage = () => {
                 <label className="mb-1 block text-sm font-medium">E-mail</label>
                 <input
                   type="email"
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.email}
                   onChange={(e) => setField("email", e.target.value)}
                   onBlur={() => onBlur("email")}
-                  placeholder="hr@company.com"
+                  placeholder=""
                   required
                 />
                 {touched.email && !emailValid && (
@@ -308,11 +336,11 @@ const EmployerSignupPage = () => {
               <div>
                 <label className="mb-1 block text-sm font-medium">Designation</label>
                 <input
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.designation}
                   onChange={(e) => setField("designation", e.target.value)}
                   onBlur={() => onBlur("designation")}
-                  placeholder="HR Manager"
+                  placeholder=""
                   required
                 />
                 {touched.designation && !designationValid && (
@@ -327,11 +355,11 @@ const EmployerSignupPage = () => {
                 <label className="mb-1 block text-sm font-medium">Password</label>
                 <input
                   type="password"
-                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                  className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                   value={values.password}
                   onChange={(e) => setField("password", e.target.value)}
                   onBlur={() => onBlur("password")}
-                  placeholder="Create a password"
+                  placeholder=""
                   required
                 />
                 {touched.password && !passwordValid && (
@@ -345,11 +373,11 @@ const EmployerSignupPage = () => {
             <div>
               <label className="mb-1 block text-sm font-medium">Employee Strength</label>
               <input
-                className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                 value={values.employeeStrength}
                 onChange={(e) => setField("employeeStrength", e.target.value)}
                 onBlur={() => onBlur("employeeStrength")}
-                placeholder="e.g. 250"
+                placeholder=""
               />
               {touched.employeeStrength && !strengthValid && (
                 <p className="mt-1 text-xs text-red-600">Enter a numeric value.</p>
@@ -363,39 +391,86 @@ const EmployerSignupPage = () => {
               <button
                 disabled={!canSubmit || loading}
                 type="submit"
-                className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:scale-[1.01] hover:bg-blue-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:scale-[1.01] hover:bg-indigo-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {loading ? "Submitting..." : "Submit For Demo"}
               </button>
             </div>
 
-            {/* OTP Verification */}
-            {showOtp && (
-              <div className="mt-4 rounded-lg border border-slate-200 p-4 dark:border-slate-700">
-                <label className="mb-1 block text-sm font-medium">
-                  Enter OTP sent to {values.email}
-                </label>
-                <div className="flex items-center gap-2">
+          </form>
+        </div>
+        )}
+
+        {stage === 'otp' && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/60 px-4">
+            <div className="w-full max-w-md rounded-2xl bg-slate-800 p-6 shadow-2xl">
+              <h2 className="text-center text-2xl font-bold text-white">Verify Your Email</h2>
+              <p className="mt-1 text-center text-slate-300">
+                We sent a verification code to <span className="font-semibold">{values.email}</span>
+              </p>
+              <form onSubmit={onVerifyOtp} className="mt-6 space-y-4">
+                <div>
+                  <label htmlFor="otp" className="mb-1 block text-sm font-medium">Enter OTP</label>
                   <input
-                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm dark:border-slate-700 dark:bg-slate-800"
+                    id="otp"
+                    className="w-full rounded-lg border border-slate-600 bg-slate-700 text-white placeholder-slate-400 px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
                     placeholder="6-digit OTP"
                     maxLength={6}
+                    required
                   />
+                </div>
+                <div className="flex items-center justify-between">
                   <button
-                    onClick={onVerifyOtp}
                     disabled={verifying || otp.trim().length < 4}
-                    type="button"
+                    type="submit"
                     className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-md transition hover:scale-[1.01] hover:bg-emerald-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {verifying ? "Verifying..." : "Verify OTP"}
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => { setStage('form'); setOtp(""); setError(""); }}
+                    className="text-sm text-slate-300 hover:text-white"
+                  >
+                    Change email
+                  </button>
                 </div>
-              </div>
-            )}
-          </form>
-        </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {stage === 'result' && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+            <div className="w-full max-w-sm rounded-2xl bg-slate-800 p-6 shadow-2xl text-center">
+              <h3 className={`text-lg font-semibold ${verified ? 'text-emerald-400' : 'text-red-400'}`}>
+                {verified ? 'Success' : 'Error'}
+              </h3>
+              <p className="mt-2 text-slate-200">{successMsg || error}</p>
+              <button
+                type="button"
+                onClick={() => {
+                  if (verified) {
+                    window.location.assign('/');
+                  } else {
+                    setStage('form');
+                    setValues(initial);
+                    setTouched({});
+                    setOtp("");
+                    setVerified(false);
+                    setError("");
+                    setSuccessMsg("");
+                  }
+                }}
+                className="mt-4 inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500"
+              >
+                {verified ? 'Go to Home' : 'Close'}
+              </button>
+            </div>
+          </div>
+        )}
       </section>
       <Footer />
     </div>

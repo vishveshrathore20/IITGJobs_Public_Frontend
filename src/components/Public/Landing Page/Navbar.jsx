@@ -4,28 +4,28 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 // ✅ Menu Config
 const navConfig = [
   { label: "Home", target: "home" },
-  { label: "About Us", target: "about" },
+  { label: "About Us", href: "/about" },
   {
     label: "Our Services",
     dropdown: [
-      { label: "Attrition Control", href: "/services/attrition" },
-      { label: "Recruitment Service", href: "/services/recruitment" },
+      { label: "Attrition Control", href: "/attrition-demo" },
+      { label: "Recruitment Service", href: "/recuitment-service" },
       
     ],
   },
-  { label: "Contact", href: "/contact" },
+  { label: "Our Team", href: "/our-team" },
   {
     label: "Jobs",
     dropdown: [
-      { label: "Post Resume", href: "/jobs/post-resume" },
-      { label: "Candidate Login", href: "/jobs/login" },
+      { label: "Post Resume", href: "/application-form" },
+      // { label: "Candidate Login", href: "/jobs/login" },
     ],
   },
   {
     label: "Employer",
     dropdown: [
-      { label: "Employer Login", href: "/employer/login" },
-      { label: "Employer Signup", href: "/employer/signup" },
+      // { label: "Employer Login", href: "/employer-login" },
+      { label: "Employer Signup", href: "/employer-signup" },
     ],
   },
 ];
@@ -59,7 +59,7 @@ const Dropdown = ({ label, items }) => {
   return (
     <div className="relative" ref={ref}>
       <button
-        className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-200 dark:hover:text-white"
+        className="inline-flex items-center gap-1 px-3 py-2 text-sm font-medium text-slate-200 hover:text-white"
         onClick={() => setOpen((v) => !v)}
         onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
       >
@@ -82,11 +82,11 @@ const Dropdown = ({ label, items }) => {
 
       <div
         className={classNames(
-          "absolute left-0 mt-2 w-60 origin-top-left rounded-xl border bg-white p-2 shadow-xl ring-1 ring-black/5 transition-all dark:bg-slate-800 z-50",
+          "absolute left-0 mt-2 w-60 origin-top-left rounded-xl border border-white/10 bg-slate-900/95 p-2 shadow-xl ring-1 ring-white/10 transition-all z-50",
           open ? "opacity-100 scale-100" : "pointer-events-none opacity-0 scale-95"
         )}
       >
-        <div className="absolute -top-2 left-6 h-4 w-4 rotate-45 border bg-white dark:bg-slate-800" />
+        <div className="absolute -top-2 left-6 h-4 w-4 rotate-45 border border-white/10 bg-slate-900" />
         {items.map((it) => (
           <NavLink
             key={it.label}
@@ -94,10 +94,8 @@ const Dropdown = ({ label, items }) => {
             onClick={() => setOpen(false)}
             className={({ isActive }) =>
               classNames(
-                "group flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-slate-50 dark:hover:bg-slate-700/60",
-                isActive
-                  ? "text-indigo-600 dark:text-indigo-400"
-                  : "text-slate-700 dark:text-slate-200"
+                "group flex items-center gap-3 rounded-md px-3 py-2 text-sm hover:bg-white/5",
+                isActive ? "text-indigo-400" : "text-slate-200"
               )
             }
           >
@@ -199,10 +197,10 @@ const Navbar = () => {
   return (
     <header
       className={classNames(
-        "sticky top-0 z-50 w-full backdrop-blur-xl",
+        "sticky top-0 z-50 w-full backdrop-blur-xl border-b",
         scrolled
-          ? "border-b bg-white/85 shadow dark:bg-slate-900/70"
-          : "border-b border-transparent bg-white/60 dark:bg-slate-900/40"
+          ? "bg-gradient-to-b from-black/80 via-slate-950/70 to-slate-900/60 border-white/10 shadow"
+          : "bg-gradient-to-b from-black/60 via-slate-950/50 to-slate-900/40 border-white/5"
       )}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
@@ -216,12 +214,10 @@ const Navbar = () => {
             </svg>
           </div>
           <div className="flex flex-col">
-            <span className="text-[17px] font-semibold text-slate-900 dark:text-white">
+            <span className="text-[17px] font-semibold text-white">
               IITGJobs.com Pvt. Ltd.
             </span>
-            <span className="text-[12px] font-medium text-slate-500 dark:text-slate-400">
-              Jobs • Talent • Growth
-            </span>
+            <span className="text-[12px] font-medium text-slate-300">Jobs • Talent • Growth</span>
           </div>
         </button>
 
@@ -238,8 +234,8 @@ const Navbar = () => {
                   classNames(
                     "px-4 py-2.5 text-base font-medium",
                     isActive
-                      ? "text-blue-600"
-                      : "text-slate-700 dark:text-slate-200 hover:text-slate-900"
+                      ? "text-indigo-500 dark:text-indigo-400"
+                      : "text-slate-200 hover:text-white"
                   )
                 }
               >
@@ -252,8 +248,8 @@ const Navbar = () => {
                 className={classNames(
                   "relative px-4 py-2.5 text-base font-medium",
                   activeSection === item.target
-                    ? "text-blue-600 dark:text-blue-400"
-                    : "text-slate-700 dark:text-slate-200 hover:text-slate-900"
+                    ? "text-indigo-500 dark:text-indigo-400"
+                    : "text-slate-200 hover:text-white"
                 )}
               >
                 {item.label}
@@ -265,7 +261,7 @@ const Navbar = () => {
         {/* ✅ Mobile Toggle */}
         <button
           onClick={() => setMobileOpen((v) => !v)}
-          className="lg:hidden p-2 text-slate-700 dark:text-slate-200"
+          className="lg:hidden p-2 text-slate-200"
         >
           {mobileOpen ? "✕" : "☰"}
         </button>
@@ -273,7 +269,7 @@ const Navbar = () => {
 
       {/* ✅ Mobile Menu */}
       {mobileOpen && (
-        <div className="lg:hidden bg-white dark:bg-slate-900 border-t">
+        <div className="lg:hidden border-t bg-gradient-to-b from-black/80 via-slate-950/70 to-slate-900/60">
           {navConfig.map((item) =>
             item.dropdown ? (
               <MobileAccordion key={item.label} label={item.label} items={item.dropdown} />
@@ -282,7 +278,7 @@ const Navbar = () => {
                 key={item.label}
                 to={item.href}
                 onClick={() => setMobileOpen(false)}
-                className="block px-5 py-3 text-base"
+                className="block px-5 py-3 text-base text-slate-200 hover:text-white"
               >
                 {item.label}
               </NavLink>
@@ -293,7 +289,7 @@ const Navbar = () => {
                   scrollToId(item.target);
                   setMobileOpen(false);
                 }}
-                className="block w-full text-left px-5 py-3 text-base"
+                className="block w-full text-left px-5 py-3 text-base text-slate-200 hover:text-white"
               >
                 {item.label}
               </button>
